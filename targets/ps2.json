@@ -1,0 +1,8 @@
+{
+  "id": "ps2",
+  "label": "PlayStation 2",
+  "platform": "ps2",
+  "status": "placeholder",
+  "note": "Reserved for a future Athena SDK; no API in this repo.",
+  "screenPresets": []
+}

@@ -1,0 +1,7 @@
+src/**
+tsconfig.json
+scripts/**
+**/*.map
+.vscode/**
+*.vsix
+natives-extracted.json

@@ -1,0 +1,181 @@
+{
+  "name": "athenastudio",
+  "displayName": "AthenaStudio",
+  "description": "IntelliSense, JAR/JAD export, and simulator for Athena2ME (J2ME) projects.",
+  "version": "0.1.0",
+  "publisher": "athenastudio",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "j2me",
+    "athena2me",
+    "midlet",
+    "javascript"
+  ],
+  "activationEvents": [
+    "onCommand:athenastudio.exportJar",
+    "onCommand:athenastudio.exportJarBuild",
+    "onCommand:athenastudio.openSimulator",
+    "onCommand:athenastudio.selectScreenPreset",
+    "onCommand:athenastudio.installTypes",
+    "onCommand:athenastudio.browseJ2meApi",
+    "onWebviewPanel:athenastudioSimulator",
+    "workspaceContains:**/main.js",
+    "onLanguage:javascript"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "athenastudio.exportJar",
+        "title": "Export JAR (use outputDir setting)",
+        "category": "AthenaStudio",
+        "icon": "$(archive)"
+      },
+      {
+        "command": "athenastudio.exportJarBuild",
+        "title": "Export JAR to workspace build/",
+        "category": "AthenaStudio",
+        "icon": "$(package)"
+      },
+      {
+        "command": "athenastudio.openSimulator",
+        "title": "Open J2ME Simulator",
+        "category": "AthenaStudio",
+        "icon": "$(device-mobile)"
+      },
+      {
+        "command": "athenastudio.selectScreenPreset",
+        "title": "AthenaStudio: Select Screen Preset"
+      },
+      {
+        "command": "athenastudio.installTypes",
+        "title": "AthenaStudio: Install J2ME Types into Workspace"
+      },
+      {
+        "command": "athenastudio.browseJ2meApi",
+        "title": "AthenaStudio: Browse J2ME Native API List"
+      }
+    ],
+    "configuration": {
+      "title": "AthenaStudio",
+      "properties": {
+        "athenastudio.templateJar": {
+          "type": "string",
+          "default": "",
+          "description": "Local template Athena2ME.jar (dev). Absolute path or relative to the workspace folder. When non-empty, this is always used and templateJarDownloadUrl is ignored. If the file is missing, export fails (fix the path or clear this to use the URL)."
+        },
+        "athenastudio.templateJad": {
+          "type": "string",
+          "default": "",
+          "description": "Local template .jad (dev). Absolute or workspace-relative. When non-empty, must exist; takes priority over sibling .jad and templateJadDownloadUrl. MIDlet-Jar-Size in output is still updated."
+        },
+        "athenastudio.templateJarDownloadUrl": {
+          "type": "string",
+          "default": "",
+          "description": "HTTPS URL for the template .jar (prod fallback). Used only when templateJar is empty; cached under templateCacheDir."
+        },
+        "athenastudio.templateJadDownloadUrl": {
+          "type": "string",
+          "default": "",
+          "description": "HTTPS URL for the template .jad. Used only when templateJad is empty and there is no sibling .jad next to the template JAR."
+        },
+        "athenastudio.templateCacheDir": {
+          "type": "string",
+          "default": ".athenastudio/template",
+          "description": "Workspace-relative folder where downloaded template JAR/JAD are stored."
+        },
+        "athenastudio.resFolder": {
+          "type": "string",
+          "default": "res",
+          "description": "Resource folder (main.js, boot.ini, assets). Files map to JAR root (res/foo → /foo)."
+        },
+        "athenastudio.outputDir": {
+          "type": "string",
+          "default": "dist",
+          "description": "Output folder for exported .jar and .jad."
+        },
+        "athenastudio.outputJarBasename": {
+          "type": "string",
+          "default": "project",
+          "description": "Default base name shown in the export prompt (outputs are <name>.jar / <name>.jad). The prompt value is not saved to settings unless you change it in Settings yourself."
+        },
+        "athenastudio.screenPresetId": {
+          "type": "string",
+          "default": "240x320",
+          "description": "Screen preset id (see targets/j2me.json)."
+        },
+        "athenastudio.screenWidth": {
+          "type": "number",
+          "default": 240,
+          "description": "Custom width when preset id is custom."
+        },
+        "athenastudio.screenHeight": {
+          "type": "number",
+          "default": 320,
+          "description": "Custom height when preset id is custom."
+        },
+        "athenastudio.simulatorBesidePreserveEditorFocus": {
+          "type": "boolean",
+          "default": true,
+          "description": "When opening the simulator webview, keep keyboard focus in the editor (recommended while editing res/boot.ini). Set false to focus the simulator panel."
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "javascript",
+        "path": "./snippets/j2me.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "athenastudio.openSimulator",
+          "when": "editorLangId == javascript && resourceFilename == 'main.js'",
+          "group": "navigation@8"
+        },
+        {
+          "command": "athenastudio.exportJarBuild",
+          "when": "editorLangId == javascript && resourceFilename == 'main.js'",
+          "group": "navigation@9"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "athenastudio.openSimulator",
+          "when": "resourceFilename == 'main.js'",
+          "group": "navigation@8"
+        },
+        {
+          "command": "athenastudio.exportJarBuild",
+          "when": "resourceFilename == 'main.js'",
+          "group": "navigation@9"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "extract-natives": "node scripts/extract-natives.mjs",
+    "sync-j2me-api": "node scripts/sync-j2me-api.mjs",
+    "check-dts-coverage": "node scripts/check-dts-coverage.mjs",
+    "verify-api": "npm run sync-j2me-api && npm run check-dts-coverage"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.10"
+  }
+}

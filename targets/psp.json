@@ -1,0 +1,8 @@
+{
+  "id": "psp",
+  "label": "PlayStation Portable",
+  "platform": "psp",
+  "status": "placeholder",
+  "note": "Reserved for a future Athena SDK; no API in this repo.",
+  "screenPresets": []
+}

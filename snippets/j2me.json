@@ -1,0 +1,56 @@
+{
+  "Athena frame loop": {
+    "prefix": "athena-frame",
+    "body": [
+      "os.setExitHandler(() => os.stopFrameLoop());",
+      "",
+      "os.startFrameLoop(() => {",
+      "\tScreen.clear();",
+      "\t$0",
+      "}, 60);"
+    ],
+    "description": "os.startFrameLoop with Screen.clear"
+  },
+  "Athena require": {
+    "prefix": "athena-require",
+    "body": ["const ${1:m} = require(\"/${2:lib/module.js}\");", "$0"],
+    "description": "require CommonJS module from JAR"
+  },
+  "Athena Request GET": {
+    "prefix": "athena-request-get",
+    "body": [
+      "const r = new Request();",
+      "r.get(\"${1:https://example.com/}\").then((res) => {",
+      "\tconst u8 = res.body;",
+      "\t$0",
+      "}).catch((e) => {",
+      "\tconsole.log(e.message);",
+      "});"
+    ],
+    "description": "Request.get with Promise"
+  },
+  "Athena Pad listener": {
+    "prefix": "athena-pad-listener",
+    "body": [
+      "Pad.addListener(Pad.${1:FIRE}, Pad.JUST_PRESSED, () => {",
+      "\t$0",
+      "});"
+    ],
+    "description": "Pad.addListener JUST_PRESSED"
+  },
+  "Athena Hello": {
+    "prefix": "athena-hello",
+    "body": [
+      "const font = new Font(\"default\");",
+      "const WHITE = Color.new(255, 255, 255);",
+      "",
+      "os.setExitHandler(() => os.stopFrameLoop());",
+      "os.startFrameLoop(() => {",
+      "\tScreen.clear();",
+      "\tfont.color = WHITE;",
+      "\tfont.print(\"Hello Athena2ME!\", 10, 10);",
+      "}, 60);"
+    ],
+    "description": "Minimal hello world"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "j2me",
+  "label": "Java ME (Athena2ME)",
+  "platform": "j2me",
+  "apiSurface": "athena2me-midp2",
+  "nativeManifest": "j2me-api.json",
+  "resGlob": "res/**/*",
+  "jadKeysPreserve": [
+    "MIDlet-Permissions",
+    "MIDlet-1",
+    "MicroEdition-Profile",
+    "MicroEdition-Configuration"
+  ],
+  "screenPresets": [
+    { "id": "128x128", "width": 128, "height": 128, "label": "128×128" },
+    { "id": "128x160", "width": 128, "height": 160, "label": "128×160 (QQVGA)" },
+    { "id": "176x208", "width": 176, "height": 208, "label": "176×208" },
+    { "id": "176x220", "width": 176, "height": 220, "label": "176×220 (S40)" },
+    { "id": "208x208", "width": 208, "height": 208, "label": "208×208" },
+    { "id": "240x320", "width": 240, "height": 320, "label": "240×320 (QVGA portrait)" },
+    { "id": "240x400", "width": 240, "height": 400, "label": "240×400 (WQVGA)" },
+    { "id": "320x240", "width": 320, "height": 240, "label": "320×240 (QVGA landscape)" },
+    { "id": "320x480", "width": 320, "height": 480, "label": "320×480 (HVGA)" },
+    { "id": "360x640", "width": 360, "height": 640, "label": "360×640" },
+    { "id": "480x800", "width": 480, "height": 800, "label": "480×800 (WVGA)" },
+    { "id": "640x360", "width": 640, "height": 360, "label": "640×360 (landscape)" },
+    { "id": "custom", "width": 240, "height": 320, "label": "Custom (workspace settings)" }
+  ]
+}

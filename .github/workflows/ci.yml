@@ -1,0 +1,92 @@
+# AthenaStudio — sync native list from Athena2ME, verify d.ts coverage, compile.
+# Push tag v* → VSIX attached to the GitHub Release.
+#
+# Optional repo Variables: ATHENA2ME_GITHUB_REPOSITORY, ATHENA2ME_REF
+# Optional Secret (private Athena2ME): ATHENA2ME_CHECKOUT_TOKEN
+
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+    tags: ["v*"]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+    inputs:
+      athena2me_ref:
+        description: "Athena2ME git ref (branch or tag) for manifest sync"
+        required: false
+        default: "main"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout AthenaStudio
+        uses: actions/checkout@v4
+
+      - name: Checkout Athena2ME
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.ATHENA2ME_GITHUB_REPOSITORY || 'DanielSant0s/Athena2ME' }}
+          ref: ${{ github.event.inputs.athena2me_ref || vars.ATHENA2ME_REF || 'main' }}
+          path: athena2me
+          token: ${{ secrets.ATHENA2ME_CHECKOUT_TOKEN || github.token }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync targets/j2me-api.json from Athena2ME
+        run: node scripts/sync-j2me-api.mjs "${{ github.workspace }}/athena2me"
+
+      - name: Fail if manifest was not updated
+        run: test -s targets/j2me-api.json
+
+      - name: Verify TypeScript definitions cover natives
+        run: npm run check-dts-coverage
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Package VSIX
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        run: npx --yes @vscode/vsce package --no-dependencies
+
+      - name: Upload VSIX artifact
+        if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: athenastudio-vsix
+          path: "*.vsix"
+
+  release:
+    needs: ci
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download VSIX
+        uses: actions/download-artifact@v4
+        with:
+          name: athenastudio-vsix
+          path: release-assets
+
+      - name: Publish GitHub Release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*.vsix
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
