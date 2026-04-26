@@ -1,8 +1,12 @@
 # AthenaStudio — sync native list from Athena2ME, verify d.ts coverage, compile.
-# Push tag v* → VSIX attached to the GitHub Release.
+# Push tag v* → VSIX attached to the GitHub Release and published to the VS Code Marketplace.
 #
 # Optional repo Variables: ATHENA2ME_GITHUB_REPOSITORY, ATHENA2ME_REF
 # Optional Secret (private Athena2ME): ATHENA2ME_CHECKOUT_TOKEN
+#
+# Secret for Visual Studio Marketplace (required for the marketplace job on tag v*):
+#   VSCE_PAT — Personal Access Token (Azure DevOps) with Marketplace: Manage;
+#   see https://code.visualstudio.com/api/working-with-extensions/publishing-extension
 
 name: CI
 
@@ -90,3 +94,26 @@ jobs:
           files: release-assets/*.vsix
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  marketplace:
+    name: Publish to VS Code Marketplace
+    needs: ci
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download VSIX
+        uses: actions/download-artifact@v4
+        with:
+          name: athenastudio-vsix
+          path: release-assets
+
+      - name: Publish to Visual Studio Marketplace
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          set -e
+          vsix_file="$(ls -1 release-assets/*.vsix | head -n1)"
+          npx --yes @vscode/vsce publish --packagePath "$vsix_file"
