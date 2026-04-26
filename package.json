@@ -3,7 +3,7 @@
   "displayName": "AthenaStudio",
   "description": "IntelliSense, JAR/JAD export, and simulator for Athena2ME (J2ME) projects.",
   "version": "1.0.0",
-  "publisher": "athenastudio",
+  "publisher": "DanielSant0s",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
