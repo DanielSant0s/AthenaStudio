@@ -2,12 +2,20 @@
   "name": "athenastudio",
   "displayName": "AthenaStudio",
   "description": "IntelliSense, JAR/JAD export, and simulator for Athena2ME (J2ME) projects.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "athenastudio",
   "license": "MIT",
   "engines": {
     "vscode": "^1.85.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DanielSant0s/AthenaStudio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/DanielSant0s/AthenaStudio/issues"
+  },
+  "homepage": "https://github.com/DanielSant0s/AthenaStudio#readme",
   "categories": [
     "Programming Languages",
     "Snippets"
