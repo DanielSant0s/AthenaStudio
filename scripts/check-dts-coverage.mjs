@@ -36,6 +36,8 @@ const SPECIAL = {
   "os.AtomicInt": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+AtomicInt\b/.test(dts),
   "os.Mutex": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+Mutex\b/.test(dts),
   "os.Semaphore": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+Semaphore\b/.test(dts),
+  "ZIP_list": (dts) => /interface\s+AthenaZipObject\b[\s\S]*?\blist\s*\(/.test(dts),
+  "ZIP_get": (dts) => /interface\s+AthenaZipObject\b[\s\S]*?\bget\s*\(/.test(dts),
 };
 
 function covered(native, dts) {

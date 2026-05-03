@@ -17,6 +17,14 @@ interface AthenaMemoryStats {
   heapUsed: number;
 }
 
+interface AthenaPerfStats {
+  framesRendered: number;
+  msPadDispatch: number;
+  msJsCallback: number;
+  msScreenUpdate: number;
+  heapUsedHint: number;
+}
+
 interface AthenaFStat {
   size?: number;
   isDirectory?: number;
@@ -96,6 +104,8 @@ declare namespace os {
   function stopFrameLoop(): void;
   function getSystemInfo(): AthenaSystemInfo;
   function getMemoryStats(optRunGc?: boolean): AthenaMemoryStats;
+  function getPerfStats(): AthenaPerfStats;
+  function trimPools(): void;
   function getStorageStats(fileUrl: string): AthenaStorageStats;
   function getProperty(key: string): string | null;
   function bluetoothGetCapabilities(): AthenaBluetoothCaps;
@@ -164,6 +174,7 @@ declare namespace Screen {
   function beginBatch(): void;
   function flushBatch(): void;
   function endBatch(): void;
+  function setAutoBatch(on: boolean): void;
   function createLayer(w: number, h: number): ScreenLayer | null;
   function setLayer(layer: ScreenLayer | null): void;
   function clearLayer(layer: ScreenLayer, color?: AthenaColorArgb): void;
