@@ -35,6 +35,22 @@
 
 ---
 
+## Screenshots  
+
+### Simulator + Hot-reload
+<img width="1607" height="947" alt="athenastudio_1" src="https://github.com/user-attachments/assets/a26fd83f-8f87-4e32-aabc-33d0988f56d0" />  
+
+### Snippets
+<img width="1365" height="392" alt="athenastudio_4" src="https://github.com/user-attachments/assets/652c0436-ee1f-42fa-9d96-8d235bb86cec" />  
+
+### Intellisense
+<img width="1022" height="177" alt="athenastudio_3" src="https://github.com/user-attachments/assets/ccf87110-ef5d-4ba3-be91-ec2b3839c4bb" />  
+
+### Boot editor
+<img width="1606" height="942" alt="athenastudio_2" src="https://github.com/user-attachments/assets/64776820-c64a-4d31-8c28-8f36cac7ee44" />  
+
+---
+
 ## Requirements
 
 - **VS Code** (or a compatible editor such as **Cursor**) **≥ 1.85.0**
