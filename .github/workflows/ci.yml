@@ -63,9 +63,11 @@ jobs:
       - name: Compile
         run: npm run compile
 
+      # Include production dependencies (e.g. adm-zip). --no-dependencies produced a VSIX
+      # that failed to load: commands missing, status bar empty — extension never activated.
       - name: Package VSIX
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-        run: npx --yes @vscode/vsce package --no-dependencies
+        run: npx --yes @vscode/vsce package
 
       - name: Upload VSIX artifact
         if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')

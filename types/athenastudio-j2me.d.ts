@@ -128,6 +128,16 @@ declare namespace os {
   namespace Thread {
     function start<T>(fn: () => T): Promise<T>;
   }
+
+  function vibrate(durationMs: number): void;
+
+  namespace camera {
+    function takeSnapshot(options?: {
+      width?: number;
+      height?: number;
+      encoding?: string;
+    }): Promise<Uint8Array>;
+  }
 }
 
 interface AthenaPool {
@@ -138,7 +148,13 @@ interface AthenaPool {
   inUse(): number;
 }
 
-declare const Pool: new () => AthenaPool;
+declare class Pool implements AthenaPool {
+  acquire(...args: unknown[]): unknown | null;
+  release(obj: unknown): void;
+  free(): number;
+  capacity(): number;
+  inUse(): number;
+}
 
 declare namespace Screen {
   const width: number;
@@ -360,4 +376,102 @@ declare function loadScript(path: string): void;
 
 declare namespace console {
   function log(...args: unknown[]): void;
+}
+
+/** AthenaStudio simulator: sessionStorage-backed key/value (not browser localStorage). */
+declare const localStorage: {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear(): void;
+};
+
+declare namespace LZ4 {
+  function compress(srcBuffer: Uint8Array): Uint8Array;
+  function decompress(srcBuffer: Uint8Array, uncompressedSize: number): Uint8Array;
+}
+
+declare namespace DEFLATE {
+  function inflate(srcBuffer: Uint8Array, uncompressedSize?: number): Uint8Array;
+}
+
+interface AthenaZipObject {
+  list(): string[];
+  get(name: string): Uint8Array | null;
+}
+
+declare namespace ZIP {
+  function open(buffer: Uint8Array): AthenaZipObject | null;
+}
+
+declare namespace Render3D {
+  function getBackend(): string;
+  function getCapabilities(): {
+    backend: string;
+    m3gPresent: number;
+    maxTriangles: number;
+    depthBufferOption: number;
+  };
+  function setTextureFilter(mode: string): void;
+  function setTextureWrap(mode: string): void;
+  function setBackend(mode: string): string | null;
+  function init(): void;
+  function setPerspective(fov: number, near: number, far: number): void;
+  function setBackground(r: number, g: number, b: number): void;
+  function setCamera(x: number, y: number, z: number): void;
+  function setLookAt(
+    ex: number,
+    ey: number,
+    ez: number,
+    tx: number,
+    ty: number,
+    tz: number,
+    ux: number,
+    uy: number,
+    uz: number
+  ): void;
+  function setMaxTriangles(n: number): void;
+  function setBackfaceCulling(on: boolean): void;
+  function setGlobalLight(dx: number, dy: number, dz: number): void;
+  function setMaterialAmbient(r: number, g: number, b: number): void;
+  function setMaterialDiffuse(r: number, g: number, b: number): void;
+  function setTexture(path: string): void;
+  function setTexCoords(uvs: ArrayLike<number> | Float32Array): void;
+  function setDepthBuffer(on: boolean): void;
+  function setTriangleStripMesh(
+    positions: ArrayLike<number> | Float32Array,
+    stripLens: ArrayLike<number> | Int32Array,
+    normals?: ArrayLike<number> | Float32Array
+  ): void;
+  function setIndexedMesh(
+    positions: ArrayLike<number> | Float32Array,
+    indices: ArrayLike<number> | Int32Array,
+    normals?: ArrayLike<number> | Float32Array
+  ): void;
+  function pushObjectMatrix(): void;
+  function popObjectMatrix(): void;
+  function clearMesh(): void;
+  function setMeshRotation(degrees: number): void;
+  function setObjectMatrix(matrix16: ArrayLike<number> | Float32Array): void;
+  function setObjectMatrixIdentity(): void;
+  function load(path: string): string | null;
+  function getSceneInfo(): string;
+  function worldAnimate(timeMs: number): void;
+  function m3gNodeTranslate(userId: number, dx: number, dy: number, dz: number): string | null;
+  function m3gNodeSetTranslation(userId: number, x: number, y: number, z: number): string | null;
+  function m3gNodeGetTranslation(userId: number): number[] | null;
+  function m3gNodeSetOrientation(
+    userId: number,
+    angleDeg: number,
+    ax: number,
+    ay: number,
+    az: number
+  ): string | null;
+  function m3gAnimSetActiveInterval(userId: number, startMs: number, endMs: number): string | null;
+  function m3gAnimSetPosition(userId: number, sequence: number, timeMs: number): string | null;
+  function m3gAnimSetSpeed(userId: number, speed: number): string | null;
+  function m3gKeyframeDurationTrack0(userId: number): number;
+  function begin(): void;
+  function render(): void;
+  function end(): void;
 }

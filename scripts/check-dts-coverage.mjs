@@ -30,7 +30,9 @@ const SPECIAL = {
   "Sound.Sfx.free": (dts) => /interface\s+SoundSfx\b[\s\S]*?\bfree\s*\(/.test(dts),
   "Sound.Sfx.playing": (dts) => /interface\s+SoundSfx\b[\s\S]*?\bplaying\s*\(/.test(dts),
   "os.Thread.start": (dts) => /namespace\s+Thread\b[\s\S]*?function\s+start\s*</.test(dts),
-  "os.Pool.ctor": (dts) => /declare\s+const\s+Pool\b/.test(dts) && /interface\s+AthenaPool\b/.test(dts),
+  "os.Pool.ctor": (dts) =>
+    (/\bdeclare\s+const\s+Pool\b/.test(dts) || /\bdeclare\s+class\s+Pool\b/.test(dts)) &&
+    /\binterface\s+AthenaPool\b/.test(dts),
   "os.AtomicInt": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+AtomicInt\b/.test(dts),
   "os.Mutex": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+Mutex\b/.test(dts),
   "os.Semaphore": (dts) => /namespace\s+os\b[\s\S]*?\bclass\s+Semaphore\b/.test(dts),

@@ -58,7 +58,17 @@ function collectResFiles(resDir: string): Record<string, string> {
         const rel = path.relative(resDir, abs).replace(/\\/g, "/");
         const jarPath = "/" + rel;
         const ext = path.extname(e.name).toLowerCase();
-        if (ext === ".png" || ext === ".jpg" || ext === ".jpeg" || ext === ".gif") {
+        if (
+          ext === ".png" ||
+          ext === ".jpg" ||
+          ext === ".jpeg" ||
+          ext === ".gif" ||
+          ext === ".wav" ||
+          ext === ".mp3" ||
+          ext === ".mid" ||
+          ext === ".midi" ||
+          ext === ".m3g"
+        ) {
           map[jarPath] = fs.readFileSync(abs).toString("base64");
           map[jarPath + ":encoding"] = "base64";
         } else {
@@ -69,6 +79,17 @@ function collectResFiles(resDir: string): Record<string, string> {
   };
   walk(resDir);
   return map;
+}
+
+function simulatorLocalResourceRoots(
+  context: vscode.ExtensionContext,
+  folder: vscode.WorkspaceFolder | undefined
+): vscode.Uri[] {
+  const roots = [vscode.Uri.file(context.extensionPath)];
+  if (folder) {
+    roots.push(vscode.Uri.file(folder.uri.fsPath));
+  }
+  return roots;
 }
 
 export class SimulatorPanel {
@@ -170,7 +191,7 @@ export class SimulatorPanel {
   ): void {
     webviewPanel.webview.options = {
       enableScripts: true,
-      localResourceRoots: [vscode.Uri.file(context.extensionPath)],
+      localResourceRoots: simulatorLocalResourceRoots(context, vscode.workspace.workspaceFolders?.[0]),
     };
     SimulatorPanel.currentPanel = new SimulatorPanel(webviewPanel, context);
   }
@@ -278,7 +299,7 @@ export class SimulatorPanel {
       {
         enableScripts: true,
         retainContextWhenHidden: true,
-        localResourceRoots: [vscode.Uri.file(context.extensionPath)],
+        localResourceRoots: simulatorLocalResourceRoots(context, folder),
       }
     );
 
@@ -302,6 +323,11 @@ export class SimulatorPanel {
 
     const simUi = this.readSimulatorUiState();
     this.simulatorUiTab = simUi.mainTab;
+
+    this.panel.webview.options = {
+      enableScripts: true,
+      localResourceRoots: simulatorLocalResourceRoots(this.context, folder),
+    };
 
     const conf = vscode.workspace.getConfiguration("athenastudio");
     const resDir = path.join(folder.uri.fsPath, conf.get<string>("resFolder", "res"));
@@ -353,6 +379,9 @@ export class SimulatorPanel {
 
     const mediaDir = path.join(this.context.extensionPath, "media");
     const bootIniUri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(mediaDir, "bootIni.js")));
+    const fflateUri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(mediaDir, "vendor", "fflate.js")));
+    const threeUri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(mediaDir, "vendor", "three.min.js")));
+    const m3gUri = this.panel.webview.asWebviewUri(vscode.Uri.file(path.join(mediaDir, "m3g-bundle.js")));
     const runtimeUri = this.panel.webview.asWebviewUri(
       vscode.Uri.file(path.join(mediaDir, "simulator.js"))
     );
@@ -375,7 +404,7 @@ export class SimulatorPanel {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' ${this.panel.webview.cspSource} blob: 'unsafe-eval'; style-src 'unsafe-inline'; img-src ${this.panel.webview.cspSource} blob: data:;" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'nonce-${nonce}' ${this.panel.webview.cspSource} blob: 'unsafe-eval'; style-src 'unsafe-inline'; img-src ${this.panel.webview.cspSource} blob: data:; connect-src ${this.panel.webview.cspSource} https:" />
   <style>
     * { box-sizing: border-box; }
     html {
@@ -903,6 +932,9 @@ export class SimulatorPanel {
     })};
   </script>
   <script nonce="${nonce}" src="${bootIniUri}"></script>
+  <script nonce="${nonce}" src="${fflateUri}"></script>
+  <script nonce="${nonce}" src="${threeUri}"></script>
+  <script nonce="${nonce}" src="${m3gUri}"></script>
   <script nonce="${nonce}" src="${runtimeUri}"></script>
 </body>
 </html>`;
